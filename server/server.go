@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 func Run() {
@@ -13,17 +12,15 @@ func Run() {
 	e := echo.New()
 
 	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	// e.Use(middleware.Logger())
+	// e.Use(middleware.Recover())
 
 	/*** Routes ***/
 
-	// Hello Routes
-	e.GET("/hello", handlers.AllHello)
-	e.GET("/hello/:id", handlers.FindHello)
-	e.POST("/hello", handlers.CreateHello)
-	e.PUT("/hello", handlers.UpdateHello)
-	e.DELETE("/hello", handlers.DeleteHello)
+	// News Routes
+	e.File("/", "asset/index.html")
+	e.GET("/news", handlers.GetAllNews)
+	e.GET("/news/:id", handlers.GetNewsByID)
 
 	// Start server
 	serverPort := os.Getenv("SERVER_PORT")

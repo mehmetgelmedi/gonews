@@ -1,26 +1,30 @@
 package handlers
 
 import (
+	"encoding/json"
+	"gonews/models"
+	"gonews/utils"
+	"os"
+
 	"github.com/labstack/echo"
 )
 
 // Handler
-func AllHello(c echo.Context) error {
-	return c.JSON(200, "ALL News")
+func GetAllNews(c echo.Context) error {
+	url := "https://newsapi.org/v2/top-headlines?country=us&apiKey=" + os.Getenv("API_KEY")
+	//var data models.NewsList
+	res := utils.Get(url)
+
+	v, ok := res.(map[string]interface{})
+	if !ok {
+		return c.JSON(500, "undefined")
+	}
+	var newss []models.News
+	err := json.Unmarshal(v["articles"], &newss)
+	//fmt.Println(reflect.TypeOf(v["articles"])) []interface {}
+	return c.JSON(200, "")
 }
 
-func FindHello(c echo.Context) error {
+func GetNewsByID(c echo.Context) error {
 	return c.JSON(200, "FIND News "+c.Param("id"))
-}
-
-func CreateHello(c echo.Context) error {
-	return c.JSON(200, "CREATE News")
-}
-
-func UpdateHello(c echo.Context) error {
-	return c.JSON(200, "UPDATE News")
-}
-
-func DeleteHello(c echo.Context) error {
-	return c.JSON(200, "DELETE News")
 }
