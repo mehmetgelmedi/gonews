@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 func Run() {
@@ -12,15 +13,16 @@ func Run() {
 	e := echo.New()
 
 	// Middleware
-	// e.Use(middleware.Logger())
-	// e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		Root: "frontend/dist",
+	}))
 
 	/*** Routes ***/
-
 	// News Routes
-	e.File("/", "asset/index.html")
 	e.GET("/news", handlers.GetAllNews)
-	e.GET("/news/:id", handlers.GetNewsByID)
+	e.GET("/news/:search", handlers.GetNewsBySearch)
 
 	// Start server
 	serverPort := os.Getenv("SERVER_PORT")

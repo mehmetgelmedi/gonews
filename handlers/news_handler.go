@@ -16,6 +16,9 @@ func GetAllNews(c echo.Context) error {
 	return c.JSON(200, res.Articles)
 }
 
-func GetNewsByID(c echo.Context) error {
-	return c.JSON(200, "FIND News "+c.Param("id"))
+func GetNewsBySearch(c echo.Context) error {
+	search := c.Param("search")
+	url := "https://newsapi.org/v2/everything?q=" + search + "&apiKey=" + os.Getenv("API_KEY")
+	res := utils.Get(url)
+	return c.JSON(200, res.Articles)
 }
