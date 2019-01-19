@@ -2,12 +2,13 @@ package utils
 
 import (
 	"encoding/json"
+	"gonews/models"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
 
-func Get(url string) interface{} {
+func Get(url string) models.Response {
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal("Error cannot get data from url")
@@ -19,7 +20,7 @@ func Get(url string) interface{} {
 		panic(err.Error())
 	}
 
-	var data interface{}
+	var data models.Response
 
 	err = json.Unmarshal(body, &data)
 	if err != nil {
