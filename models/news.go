@@ -1,7 +1,16 @@
 package models
 
+type Response struct {
+	News
+}
+
 type News struct {
-	ID          string `json:"id"`
+	Status       string    `json:"status"`
+	TotalResults int       `json:"totalResults"`
+	Articles     []Article `json:"articles"`
+}
+
+type Article struct {
 	Author      string `json:"author"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -9,8 +18,4 @@ type News struct {
 	URLToImage  string `json:"urlToImage"`
 	PublishedAt string `json:"publishedAt"`
 	Content     string `json:"content"`
-}
-
-type NewsList struct {
-	Newss []News
 }

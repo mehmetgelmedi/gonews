@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
-	"gonews/models"
 	"gonews/utils"
 	"os"
 
@@ -15,14 +13,7 @@ func GetAllNews(c echo.Context) error {
 	//var data models.NewsList
 	res := utils.Get(url)
 
-	v, ok := res.(map[string]interface{})
-	if !ok {
-		return c.JSON(500, "undefined")
-	}
-	var newss []models.News
-	err := json.Unmarshal(v["articles"], &newss)
-	//fmt.Println(reflect.TypeOf(v["articles"])) []interface {}
-	return c.JSON(200, "")
+	return c.JSON(200, res.Articles)
 }
 
 func GetNewsByID(c echo.Context) error {
