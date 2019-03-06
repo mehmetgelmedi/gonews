@@ -18,6 +18,12 @@ func Run() {
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root: "frontend/dist",
 	}))
+	
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowMethods: []string{echo.GET},
+	}))
 
 	/*** Routes ***/
 	// News Routes
