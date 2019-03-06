@@ -1,22 +1,22 @@
 <template>
   <div id="app">
-    <div v-if="thx">
+    <div v-if="this.thxNewsApi">
       <NewsAPI/>
     </div>
     <searchNews v-on:news-search="handleChange"/>
     <News v-bind:news="news"/>
     <div class="loader">
-      <pulse-loader :loading="loading" :color="color"></pulse-loader>
+      <pulse-loader :loading="this.isSpinloading" :color="color"></pulse-loader>
     </div>
   </div>
 </template>
 
 <script>
-import Request from "request";
 import News from "./components/News.vue";
 import NewsAPI from "./components/NewsAPI";
 import searchNews from "./components/searchNews";
 import PulseLoader from "vue-spinner/src/PulseLoader.vue";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "app",
@@ -26,6 +26,14 @@ export default {
     searchNews,
     PulseLoader
   },
+  computed: mapState([
+    "thxNewsApi",
+    "isSpinloading",
+    "allNews",
+    "news",
+    "limit",
+    "search"
+  ]),
   created() {
     this.getNews();
     window.addEventListener("scroll", this.handleScroll);
@@ -33,16 +41,12 @@ export default {
   // updated() {},
   data() {
     return {
-      thx: true,
-      loading: false,
-      allNews: [],
-      news: [],
-      limit: 0,
-      color: "#FD6A02",
-      search: ""
+      color: "#FD6A02"
     };
   },
   methods: {
+        ...mapActions(["getNews", "incLimit"]),
+    ...mapMutations(["spinLoader", "thankYouNewsApi"]),
     handleScroll() {
       const totalHeight = document.documentElement.scrollHeight;
       const clientHeight = document.documentElement.clientHeight;
@@ -54,38 +58,9 @@ export default {
         this.incLimit();
       }
     },
-    getNews(search = "technology") {
-      this.loading = true;
-      Request(
-        `http://localhost:3456/news/${search}`,
-        (error, res, body) => {
-          const result = JSON.parse(body);
-          if (result.status === "error") {
-            this.loading = false;
-            alert("Not found");
-          } else {
-            this.allNews = result;
-            this.thx = false;
-            this.incLimit();
-          }
-        }
-      );
-    },
-    incLimit() {
-      if (this.limit < this.allNews.length) {
-        this.loading = true;
-        setTimeout(() => {
-          this.news = [
-            ...this.news,
-            ...this.allNews.slice(this.limit, (this.limit += 10))
-          ];
-          this.loading = false;
-        }, 2000);
-      }
-    },
-    handleChange(search) {
+    handleChange() {
       this.reset();
-      this.getNews(search);
+      this.getNews();
     },
     reset() {
       this.news = this.allNews = [];
