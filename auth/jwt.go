@@ -2,6 +2,7 @@ package auth
 
 import (
 	"gonews/models"
+	"gonews/repositories"
 	"net/http"
 	"time"
 	"os"
@@ -11,18 +12,21 @@ import (
 )
 
 func Login(c echo.Context) error {
-	username := c.FormValue("username")
-	password := c.FormValue("password")
+	var loginUser models.UserLogin
+	loginUser.Username = c.FormValue("username")
+	loginUser.Password = c.FormValue("password")
 
 	// Throws unauthorized error
-	if username != "jon" || password != "shhh!" {
+	user :=repositories.GetUser(loginUser)
+	if user.Username == "" {
 		return echo.ErrUnauthorized
 	}
 
 	// Set custom claims
-	claims := &models.JwtCustomClaims{
-		"Jon Snow",
-		true,
+	claims := &models.JwtCustomUserClaims{
+		user.ID,
+		user.Username,
+		user.IsAdmin,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},
@@ -32,7 +36,8 @@ func Login(c echo.Context) error {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte("secret"))
+	secret := os.Getenv("SECRET")
+	t, err := token.SignedString([]byte(secret))
 	if err != nil {
 		return err
 	}
@@ -48,15 +53,14 @@ func Accessible(c echo.Context) error {
 
 func Restricted(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*models.JwtCustomClaims)
-	//name := claims.Name
+	claims := user.Claims.(*models.JwtCustomUserClaims)
 	return c.JSON(http.StatusOK, claims)
 }
 
 func Config() middleware.JWTConfig{
 	secret := os.Getenv("SECRET")
 	config := middleware.JWTConfig{
-		Claims:     &models.JwtCustomClaims{},
+		Claims:     &models.JwtCustomUserClaims{},
 		SigningKey: []byte(secret),
 	}
 	return config
