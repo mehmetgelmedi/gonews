@@ -3,14 +3,25 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
+
+func CreateTables() {
+	db := Connect()
+	defer db.Close()
+
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS public.user (id SERIAL PRIMARY KEY, username text, password text, is_admin boolean)")
+	if err != nil {
+		panic(err)
+	}
+}
 
 func Connect() *sql.DB {
 	conninfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-	os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 	db, err := sql.Open("postgres", conninfo)
 	if err != nil {
 		log.Panic(err)
