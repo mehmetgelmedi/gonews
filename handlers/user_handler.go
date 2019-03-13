@@ -16,5 +16,16 @@ func Register(c echo.Context) error {
 
 	user = repositories.CreateUser(user)
 
-	return c.JSON(http.StatusCreated, user.ID)
+	return c.JSON(http.StatusCreated, echo.Map{
+		"UserId": user.ID,
+		"Result": registrationCheckHelper(user),
+	})
+}
+
+func registrationCheckHelper(user *models.User) string {
+	if user.ID > 0 {
+		return "Account successfully created. Thank you for your registration!"
+	 } else { 
+		return "The username " + user.Username + " already exists!"
+	}
 }

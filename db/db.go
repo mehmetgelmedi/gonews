@@ -13,7 +13,7 @@ func CreateTables() {
 	db := Connect()
 	defer db.Close()
 
-	_, err := db.Exec("CREATE TABLE IF NOT EXISTS public.user (id SERIAL PRIMARY KEY, username text, password text, is_admin boolean)")
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS public.user (id SERIAL PRIMARY KEY, username VARCHAR(20) UNIQUE, password VARCHAR(60), is_admin boolean)")
 	if err != nil {
 		panic(err)
 	}

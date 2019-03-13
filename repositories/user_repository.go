@@ -28,11 +28,17 @@ func CreateUser(user *models.User) *models.User {
 	db := db.Connect()
 	defer db.Close()
 
-	sqlStatement := `INSERT INTO public.user (username, password, is_admin) VALUES ($1, $2, $3) RETURNING id`
-
-	err := db.QueryRow(sqlStatement, user.Username, user.Password, user.IsAdmin).Scan(&user.ID)
+	sqlStatement := `INSERT INTO public.user (username, password, is_admin) VALUES ($1, $2, $3) ON CONFLICT (username) DO NOTHING RETURNING id`
+	
+	row, err := db.Query(sqlStatement, user.Username, user.Password, user.IsAdmin)
 	if err != nil {
 		panic(err)
+	}
+	for row.Next(){
+		err := row.Scan(&user.ID)
+		if err != nil{
+			panic(err.Error())
+		}
 	}
 
 	return user
