@@ -1,9 +1,10 @@
 package server
 
 import (
-	"gonews/handlers"
 	"gonews/auth"
+	"gonews/handlers"
 	"os"
+
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -18,7 +19,7 @@ func Run() {
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root: "frontend/dist",
 	}))
-	
+
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
@@ -27,6 +28,7 @@ func Run() {
 
 	/*** Routes ***/
 	// News Routes
+	e.POST("/register", handlers.Register)
 	e.POST("/login", auth.Login)
 	e.GET("/", auth.Accessible)
 
