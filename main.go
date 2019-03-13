@@ -1,6 +1,7 @@
 package main
 
 import (
+	"gonews/db"
 	"gonews/server"
 	"log"
 
@@ -12,5 +13,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	db.CreateTables()
 	server.Run()
 }
