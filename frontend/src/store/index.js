@@ -24,8 +24,13 @@ export default new Vuex.Store({
     actions: {
         getNews({ state, commit, dispatch }) {
             commit('spinLoader', { status: true });
-            Request(
-                `http://localhost:3456/news/${state.search}`,
+            const options = {
+                url: `http://localhost:3456/api/news/${state.search}`,
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            };
+            Request(options,
                 (error, res, body) => {
                     const result = JSON.parse(body);
                     if (result.status === "error") {
