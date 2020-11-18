@@ -20,7 +20,7 @@ func CreateTables() {
 }
 
 func Connect() *sql.DB {
-	conninfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
+	conninfo := fmt.Sprintf("postgresql://%s:%s@postgres/%s?sslmode=disable",
 		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 	db, err := sql.Open("postgres", conninfo)
 	if err != nil {

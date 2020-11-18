@@ -1,0 +1,45 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - db.env
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  # vju:
+  #   image: vju
+  #   build:
+  #     context: .
+  #     dockerfile: frontend/Dockerfile
+  #   environment:
+  #     NODE_ENV: "${NODE_ENV}"
+
+  gonews:
+    image: gonews
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 3456:3456
+    depends_on:
+      - postgres
+    command: ["./wait-for-postgres.sh", "postgres", "go", "run", "main.go"]
+
+
+volumes:
+  database-data:
