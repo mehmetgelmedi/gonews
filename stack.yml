@@ -19,13 +19,15 @@ services:
     ports:
       - 8080:8080
 
-  # vju:
-  #   image: vju
-  #   build:
-  #     context: .
-  #     dockerfile: frontend/Dockerfile
-  #   environment:
-  #     NODE_ENV: "${NODE_ENV}"
+  vju:
+    image: vju
+    build:
+      context: frontend
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: "${NODE_ENV}"
+    ports:
+        - 4200:80
 
   gonews:
     image: gonews
