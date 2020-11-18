@@ -16,13 +16,13 @@ func Run() {
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
-		Root: "frontend/dist",
-	}))
+	// e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+	// 	Root: "frontend/dist",
+	// }))
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowHeaders: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.POST},
 	}))
 
